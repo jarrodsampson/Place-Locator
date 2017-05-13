@@ -1,0 +1,138 @@
+
+<div class="">
+
+  <div class="row">
+    <div class="col s12 m4 l4">
+      <div class="padding">
+        <div class="">
+          <h3>Locate By Zip</h3>
+          <p>
+            <input type="text" [(ngModel)]="place.zipcode" placeholder="Zip Code" (keyup.enter)="getLocation(place)" (blur)="getLocation(place)" />
+            <br />
+            <span [hidden]="placeDataHidden">Place: {{placeData.formatted_address}}</span>
+          </p>
+        </div>
+
+        <div [hidden]="placeDataHidden">
+          <p>See what's around you.</p>
+
+          <input type="text" placeholder="Enter Radius" [(ngModel)]="place.radius" (keyup.enter)="viewArea(place, placeData.geometry.location.lat, placeData.geometry.location.lng)" (blur)="viewArea(place, placeData.geometry.location.lat, placeData.geometry.location.lng)" />
+        </div>
+
+        <div [hidden]="placesResultsHidden" class="placesDiv">
+          <div *ngFor="let placeItem of placesResults; let i = index">
+            <p><strong>{{placeItem.name}}</strong></p>
+            <p>{{placeItem.vicinity}}</p>
+          </div>
+
+          <div *ngIf="placesResults.length <= 0">
+            <p>No Results Found.</p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+    <!-- (mapClick)="mapClicked($event)"-->
+    <div class="col s12 m8 l8 mapContainer">
+      <sebm-google-map class="map"
+        [latitude]="placeData.geometry.location.lat"
+        [longitude]="placeData.geometry.location.lng"
+        [zoom]="zoom"
+        [draggable]="false"
+        (mapClick)="addModal.open(); mapTemp($event)">
+        <sebm-google-map-marker
+          [latitude]="placeData.geometry.location.lat"
+          [longitude]="placeData.geometry.location.lng"
+          [markerDraggable]="true">
+        </sebm-google-map-marker>
+
+        <sebm-google-map-marker
+          *ngFor="let m of markers; let i = index"
+          (markerClick)="clickedMarker(m.label, i)"
+          [latitude]="m.lat"
+          [longitude]="m.lng"
+          [label]="m.number"
+          [markerDraggable]="true"
+          [title]="m.title"
+          (dragEnd)="markerDragEnd(m, $event)">
+
+          <sebm-google-map-info-window>
+            <strong>{{m.description}}</strong>
+          </sebm-google-map-info-window>
+
+        </sebm-google-map-marker>
+
+      </sebm-google-map>
+    </div>
+  </div>
+</div>
+
+
+<div class="padding">
+
+  <div class="row">
+    <div class="col s12">
+      <div>
+        <p *ngIf="markers.length > 1">{{markers.length}} Markers Found.</p>
+        <p *ngIf="markers.length === 1">{{markers.length}} Marker Found.</p>
+        <p *ngIf="markers.length <= 0">No Markers found.</p>
+        <button *ngIf="markers.length > 0" (click)="clearAllModal.open()" class="waves-effect waves-light btn deep-purple darken-1">Clear All</button>
+      </div>
+
+      <div class="small-spacer"></div>
+    </div>
+
+    <div class="">
+      <div class="markerListData">
+        <div class="col s12 m4 l3" *ngFor="let m of markers; let i = index">
+          <div class="card hoverable left-align">
+            <div class="card-content">
+              <span class="card-title truncate" (click)="detailsView()">{{m.title}}</span>
+              <p class="" [innerHTML]="m.description | truncate : 100"></p>
+              <!--<p>{{m.lat}} {{m.lng}}</p>-->
+            </div>
+            <div class="card-action">
+              <a (click)="detailsView()">Details</a>
+              <a (click)="showOnMap(m)" ><i class="material-icons">location_on</i></a>
+              <a (click)="delete(i, m.title)"><i class="material-icons plus">delete</i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+
+<mz-modal #addModal [fixedFooter]="false">
+  <mz-modal-header>
+    Add a New Pin
+  </mz-modal-header>
+  <mz-modal-content>
+    Please Fill Out the Information Below to add this pin.
+    <input type="text" placeholder="Name of Pin" [(ngModel)]="markerHold.title" />
+    <textarea class="materialize-textarea" [(ngModel)]="markerHold.desc" placeholder="Description"></textarea>
+  </mz-modal-content>
+  <mz-modal-footer>
+    <button mz-button [flat]="true" mz-modal-close>Cancel</button>
+    <button mz-button [flat]="true" mz-modal-close (click)="mapClicked(markerHold)">Add Pin</button>
+  </mz-modal-footer>
+</mz-modal>
+
+
+<mz-modal #clearAllModal [fixedFooter]="false">
+  <mz-modal-header>
+    Clear all Pins?
+  </mz-modal-header>
+  <mz-modal-content>
+    This cannot be undone. Continue?
+  </mz-modal-content>
+  <mz-modal-footer>
+    <button mz-button [flat]="true" mz-modal-close>Cancel</button>
+    <button mz-button [flat]="true" mz-modal-close (click)="clearAll()">Erase Everything</button>
+  </mz-modal-footer>
+</mz-modal>
