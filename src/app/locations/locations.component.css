@@ -1,0 +1,127 @@
+.sebm-google-map-container {
+  height: 100%;
+}
+
+
+.map {
+  width: 100%;
+  height: 700px;
+  top: 0;
+  right: 0;
+  z-index:0;
+  margin:0;
+  padding:0;
+}
+
+.mapContainer {
+  overflow:hidden;
+}
+
+
+.panel {
+  max-width:750px;
+  min-width:350px;
+  background:#ecf0f1;
+  position:absolute;
+  top:0;
+  left:0;
+  height:704px;
+  z-index:1;
+  width:450px;
+  padding:1em;
+  overflow-y:scroll;
+  margin-top: 4em;
+  resize:horizontal;
+  box-shadow: 1px 1px 50px 1px #000;
+}
+
+.panel .card .card-content {
+  min-height: 0;
+}
+
+.markerListData {
+  margin-top: 1em;
+}
+
+i {
+  color: #5e35b1;
+  cursor:pointer;
+}
+
+.navigation {
+  text-align: center;
+  position: relative;
+}
+
+.eraser {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.lockSection {
+  position: absolute;
+  right:1.5em;
+}
+
+.lockSection:hover {
+}
+
+i {
+  transition: all 1s ease-in-out;
+  -webkit-transition: all 1s ease-in-out;
+  -moz-transition: all 1s ease-in-out;
+}
+
+i:hover {
+  color:green;
+  -moz-animation: tada 1s;
+  -webkit-animation: tada 1s ;
+  animation: tada 1s;
+}
+
+.sliceTitle {
+  max-width: 90%;
+}
+
+.padding {
+  padding: 0 1em 1em 1em;
+}
+
+.pull-up {
+  margin-top: -2em;
+}
+
+
+@media(max-width:992px) {
+  .panel {
+    max-width:750px;
+    min-width:350px;
+    background:#ecf0f1;
+    position:relative;
+    top:0;
+    left:0;
+    max-height:400px;
+    height:auto;
+    z-index:1;
+    width:100%;
+    padding:1em;
+    overflow-y:scroll;
+    margin-top: 0;
+    resize:none;
+    box-shadow: 1px 1px 50px 1px #000;
+  }
+
+  .map {
+    height:400px;
+    width: 100%;
+    position: relative;
+    top: 0;
+    right: 0;
+  }
+
+  .padding[_ngcontent-c1] {
+    padding: 0;
+  }
+}
+

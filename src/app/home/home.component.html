@@ -5,9 +5,9 @@
     <div class="col s12 m4 l4">
       <div class="padding">
         <div class="">
-          <h3>Locate By Zip</h3>
+          <h4>Locate By Zip</h4>
           <p>
-            <input type="text" [(ngModel)]="place.zipcode" placeholder="Zip Code" (keyup.enter)="getLocation(place)" (blur)="getLocation(place)" />
+            <input type="text" [(ngModel)]="place.zipcode" placeholder="Zip Code" (keyup.enter)="getLocation(place)" (blur)="getLocation(place)" maxlength="5" />
             <br />
             <span [hidden]="placeDataHidden">Place: {{placeData.formatted_address}}</span>
           </p>
@@ -16,13 +16,47 @@
         <div [hidden]="placeDataHidden">
           <p>See what's around you.</p>
 
-          <input type="text" placeholder="Enter Radius" [(ngModel)]="place.radius" (keyup.enter)="viewArea(place, placeData.geometry.location.lat, placeData.geometry.location.lng)" (blur)="viewArea(place, placeData.geometry.location.lat, placeData.geometry.location.lng)" />
+          <mz-dropdown
+            [id]="'categories-drop'"
+            [align]="'left'"
+            [constrainWidth]="false"
+            [dropdownButtonId]="'categories'"
+            [gutter]="true"
+            [hover]="true"
+            [inDuration]="300"
+            [outDuration]="300"
+            [stopPropagation]="true">
+
+            <mz-dropdown-item *ngFor="let choice of categories; let i = index">
+              <a (click)="searchLocation(choice, placeData.geometry.location.lat, placeData.geometry.location.lng)">{{choice.show}}</a>
+            </mz-dropdown-item>
+
+          </mz-dropdown>
+
+            <p>
+              <a mz-button id="categories" href="#" class="deep-purple darken-1">Category</a> - {{savedType.show || "None"}}
+            </p>
+
+          <input type="text" maxlength="5" placeholder="Enter Radius (Meters)" [(ngModel)]="place.radius" (keyup.enter)="viewArea(place, placeData.geometry.location.lat, placeData.geometry.location.lng)" (blur)="viewArea(place, placeData.geometry.location.lat, placeData.geometry.location.lng)" />
         </div>
 
-        <div [hidden]="placesResultsHidden" class="placesDiv">
-          <div *ngFor="let placeItem of placesResults; let i = index">
-            <p><strong>{{placeItem.name}}</strong></p>
+        <div [hidden]="placesResultsHidden" class="placesDiv" id="placesDiv">
+          <!--<div [hidden]="notLoading" class="InLoader">
+            <p>Loading...</p>
+          </div> -->
+          <div *ngFor="let placeItem of placesResults; let i = index" class="placesListItem">
+            <p>
+              <strong>{{placeItem.name}}
+                <img class="imagery" src="{{placeItem.icon}}" alt="{{placeItem.name}}" />
+                <i class="material-icons saveStar"
+                   (click)="savedLocationFromRadius(placeItem, i)"
+                   [ngClass]="{ 'starred': placeItem.isSuggested == true }">grade</i>
+              </strong>
+            </p>
             <p>{{placeItem.vicinity}}</p>
+            <p>
+              <span class="tagItem" *ngFor="let tag of placeItem.types"><em>{{tag}}</em></span>
+            </p>
           </div>
 
           <div *ngIf="placesResults.length <= 0">
@@ -35,6 +69,16 @@
 
     </div>
     <!-- (mapClick)="mapClicked($event)"-->
+    <!--
+
+    <sebm-google-map-marker
+          [latitude]="placeData.geometry.location.lat"
+          [longitude]="placeData.geometry.location.lng"
+          [markerDraggable]="true">
+        </sebm-google-map-marker>
+
+        -->
+
     <div class="col s12 m8 l8 mapContainer">
       <sebm-google-map class="map"
         [latitude]="placeData.geometry.location.lat"
@@ -42,14 +86,9 @@
         [zoom]="zoom"
         [draggable]="false"
         (mapClick)="addModal.open(); mapTemp($event)">
-        <sebm-google-map-marker
-          [latitude]="placeData.geometry.location.lat"
-          [longitude]="placeData.geometry.location.lng"
-          [markerDraggable]="true">
-        </sebm-google-map-marker>
 
         <sebm-google-map-marker
-          *ngFor="let m of markers; let i = index"
+          *ngFor="let m of markers | searchFilter:search; let i = index"
           (markerClick)="clickedMarker(m.label, i)"
           [latitude]="m.lat"
           [longitude]="m.lng"
@@ -59,7 +98,7 @@
           (dragEnd)="markerDragEnd(m, $event)">
 
           <sebm-google-map-info-window>
-            <strong>{{m.description}}</strong>
+            <strong>{{m._description}}</strong>
           </sebm-google-map-info-window>
 
         </sebm-google-map-marker>
@@ -70,36 +109,45 @@
 </div>
 
 
-<div class="padding">
+<div class="padding pull-up">
 
   <div class="row">
     <div class="col s12">
       <div>
-        <p *ngIf="markers.length > 1">{{markers.length}} Markers Found.</p>
+        <p *ngIf="markers.length > 1">{{markers.length}} Total Markers Found.</p>
         <p *ngIf="markers.length === 1">{{markers.length}} Marker Found.</p>
         <p *ngIf="markers.length <= 0">No Markers found.</p>
-        <button *ngIf="markers.length > 0" (click)="clearAllModal.open()" class="waves-effect waves-light btn deep-purple darken-1">Clear All</button>
       </div>
 
-      <div class="small-spacer"></div>
+      <div>
+        <input class="topRepoInput" type="text" [(ngModel)]="search.title" placeholder="Search Markers..."/>
+      </div>
+
     </div>
 
     <div class="">
       <div class="markerListData">
-        <div class="col s12 m4 l3" *ngFor="let m of markers; let i = index">
+        <div class="col s12 m4 l3" *ngFor="let m of (markers | searchFilter:search); let i = index">
           <div class="card hoverable left-align">
             <div class="card-content">
-              <span class="card-title truncate" (click)="detailsView()">{{m.title}}</span>
-              <p class="" [innerHTML]="m.description | truncate : 100"></p>
+              <span class="card-title truncate" (click)="showOnMap(m)">{{m.title}}</span>
+              <p class="" [innerHTML]="m._description | truncate : 100"></p>
               <!--<p>{{m.lat}} {{m.lng}}</p>-->
             </div>
             <div class="card-action">
-              <a (click)="detailsView()">Details</a>
-              <a (click)="showOnMap(m)" ><i class="material-icons">location_on</i></a>
-              <a (click)="delete(i, m.title)"><i class="material-icons plus">delete</i></a>
+              <a (click)="detailsModal.open();detailsView(m)">Details</a>
+              <div class="plus">
+                <a (click)="showOnMap(m)" ><i class="material-icons">location_on</i></a>
+                <a (click)="delete(m)"><i class="material-icons">delete</i></a>
+              </div>
             </div>
           </div>
         </div>
+
+        <div class="col s12 noResults" *ngIf="(markers | searchFilter:search).length === 0">
+          <p>No results found.</p>
+        </div>
+
       </div>
     </div>
 
@@ -124,15 +172,16 @@
 </mz-modal>
 
 
-<mz-modal #clearAllModal [fixedFooter]="false">
+<mz-modal #detailsModal [fixedFooter]="false">
   <mz-modal-header>
-    Clear all Pins?
+    {{details.title}}
   </mz-modal-header>
   <mz-modal-content>
-    This cannot be undone. Continue?
+    {{details._description}}
   </mz-modal-content>
   <mz-modal-footer>
-    <button mz-button [flat]="true" mz-modal-close>Cancel</button>
-    <button mz-button [flat]="true" mz-modal-close (click)="clearAll()">Erase Everything</button>
+    <button mz-button [flat]="true" mz-modal-close (click)="showOnMap(details)">View On Map</button>
+    <button mz-button [flat]="true" mz-modal-close (click)="delete(details)">Delete</button>
+    <button mz-button [flat]="true" mz-modal-close>Close</button>
   </mz-modal-footer>
 </mz-modal>

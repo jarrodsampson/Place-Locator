@@ -1,0 +1,104 @@
+
+<div class="">
+
+  <div class="">
+
+    <div class="panel">
+      <div *ngIf="markers.length > 0" class="navigation">
+        <strong>
+          <p *ngIf="markers.length > 1">{{markers.length}} Markers Found.</p>
+          <p *ngIf="markers.length === 1">{{markers.length}} Marker Found.</p>
+          <p *ngIf="markers.length <= 0">No Markers found.</p>
+        </strong>
+        <a (click)="clearAllModal.open()"><i class="material-icons eraser">refresh</i></a>
+
+        <div>
+          <input class="topRepoInput" type="text" [(ngModel)]="search.title" placeholder="Search Markers..."/>
+        </div>
+      </div>
+      <div class="markerListData">
+        <div class="col s12 m4 l3" *ngFor="let m of (markers | searchFilter:search); let i = index">
+          <div class="card hoverable left-align">
+            <div class="card-content">
+
+              <div (click)="getLockItem(m)" class="lockSection">
+                <a [hidden]="m._locked"><i class="material-icons">lock_open</i></a>
+                <a [hidden]="!m._locked"><i class="material-icons">lock</i></a>
+              </div>
+              <span class="card-title truncate sliceTitle" (click)="showOnMap(m)">{{m.title}}</span>
+              <p class="" [innerHTML]="m._description | truncate : 100"></p>
+              <!--<p>{{m.lat}} {{m.lng}}</p>-->
+            </div>
+            <div class="card-action">
+              <a (click)="detailsModal.open();detailsView(m)">Details</a>
+              <div class="plus">
+                <a (click)="showOnMap(m)" ><i class="material-icons">location_on</i></a>
+                <a (click)="delete(i, m)"><i class="material-icons">delete</i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col s12 noResults" *ngIf="(markers | searchFilter:search).length === 0">
+          <p>No results found.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col s12 m12 l12 mapContainer">
+      <sebm-google-map class="map"
+                       [latitude]="placeData.geometry.location.lat"
+                       [longitude]="placeData.geometry.location.lng"
+                       [zoom]="zoom"
+                       [draggable]="false">
+
+
+        <sebm-google-map-marker
+          *ngFor="let m of markers | searchFilter:search; let i = index"
+          [latitude]="m.lat"
+          [longitude]="m.lng"
+          [label]="m._number"
+          [markerDraggable]="true"
+          [title]="m.title"
+          (dragEnd)="markerDragEnd(m, $event)">
+
+          <sebm-google-map-info-window>
+            <strong>{{m._description}}</strong>
+          </sebm-google-map-info-window>
+
+        </sebm-google-map-marker>
+
+      </sebm-google-map>
+    </div>
+
+  </div>
+</div>
+
+
+<mz-modal #clearAllModal [fixedFooter]="false">
+  <mz-modal-header>
+    Clear all unlocked Pins?
+  </mz-modal-header>
+  <mz-modal-content>
+    This cannot be undone. Continue? Your Locked Pins will not be deleted.
+  </mz-modal-content>
+  <mz-modal-footer>
+    <button mz-button [flat]="true" mz-modal-close>Cancel</button>
+    <button mz-button [flat]="true" mz-modal-close (click)="clearAllUnlocked(markers)">Purge</button>
+  </mz-modal-footer>
+</mz-modal>
+
+
+<mz-modal #detailsModal [fixedFooter]="false">
+  <mz-modal-header>
+    {{details.title}}
+  </mz-modal-header>
+  <mz-modal-content>
+    {{details._description}}
+  </mz-modal-content>
+  <mz-modal-footer>
+    <button mz-button [flat]="true" mz-modal-close (click)="showOnMap(details)">View On Map</button>
+    <button mz-button [flat]="true" mz-modal-close (click)="delete(details)">Delete</button>
+    <button mz-button [flat]="true" mz-modal-close>Close</button>
+  </mz-modal-footer>
+</mz-modal>

@@ -16,8 +16,12 @@ export class APIService {
     return this.http.get(this.server + 'geocode/json?latlng=' + lat + ',' + lng +  '&key=' + this.key).map((res:Response) => res.json());
   }
 
-  getByRadius(radius, lat, lng) {
-    return this.http.get(this.server + 'place/nearbysearch/json?location=' + lat + ',' + lng + '&radius=' + radius + '&type=restaurant&key=' + this.key).map((res:Response) => res.json());
+  getByRadius(radius, lat, lng, type) {
+    return this.http.get(this.server + 'place/nearbysearch/json?location=' + lat + ',' + lng + '&radius=' + radius + '&type=' + type + '&key=' + this.key).map((res:Response) => res.json());
+  }
+
+  loadPlaceTypes() {
+    return this.http.get('assets/data/places-types.json').map((res:Response) => res.json());
   }
 
 }

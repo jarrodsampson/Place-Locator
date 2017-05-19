@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, Title }  from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
@@ -6,6 +6,7 @@ import { HttpModule } from '@angular/http';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { LocationsComponent } from './locations/locations.component';
+import { SettingsComponent } from './settings/settings.component';
 import { ErrorComponent } from './error/error.component';
 
 import { AgmCoreModule } from 'angular2-google-maps/core';
@@ -15,14 +16,19 @@ import { TruncateModule } from 'ng2-truncate';
 import { RouterModule }   from '@angular/router';
 import {APP_ROUTES} from './routes';
 
+import { SearchPipe } from './pipes/searchPipe';
+
 import { APIService } from './services/APIService';
+import {LocationStore} from './services/Store';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     LocationsComponent,
-    ErrorComponent
+    SettingsComponent,
+    ErrorComponent,
+    SearchPipe
   ],
   imports: [
     BrowserModule,
@@ -37,7 +43,7 @@ import { APIService } from './services/APIService';
 
 
   ],
-  providers: [APIService],
+  providers: [APIService, LocationStore, Title],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
