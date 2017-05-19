@@ -91,14 +91,16 @@
 
 <mz-modal #detailsModal [fixedFooter]="false">
   <mz-modal-header>
-    {{details.title}}
+    <h4 [hidden]="isEditing" (mouseover)="editDetails()">{{details.title}}</h4>
+    <input [hidden]="!isEditing" (mouseout)="saveDetailChanges(details)" type="text" placeholder="Title" [(ngModel)]="details.title" />
   </mz-modal-header>
   <mz-modal-content>
-    {{details._description}}
+    <p [hidden]="isEditing" (mouseover)="editDetails()"><i class="material-icons">edit</i> {{details._description}}</p>
+    <textarea [hidden]="!isEditing" class="materialize-textarea" [(ngModel)]="details._description" (mouseout)="saveDetailChanges(details)" placeholder="Description"></textarea>
   </mz-modal-content>
   <mz-modal-footer>
-    <button mz-button [flat]="true" mz-modal-close (click)="showOnMap(details)">View On Map</button>
-    <button mz-button [flat]="true" mz-modal-close (click)="delete(details)">Delete</button>
+    <button mz-button [flat]="true" mz-modal-close (click)="showOnMap(details)"><i class="material-icons">location_on</i></button>
+    <button mz-button [flat]="true" mz-modal-close (click)="delete(details)"><i class="material-icons">delete</i></button>
     <button mz-button [flat]="true" mz-modal-close>Close</button>
   </mz-modal-footer>
 </mz-modal>

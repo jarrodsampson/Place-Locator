@@ -30,7 +30,8 @@
 
 
 .card .card-content {
-  min-height: 225px;
+  min-height: 150px;
+  max-height: 150px;
 }
 
 .noResults {
@@ -88,6 +89,7 @@ input[type="text"]:focus:not([readonly]), input[type="password"]:focus:not([read
 
 .side-nav img {
   max-width:100%;
+  margin-bottom: -2em;
 }
 
 
@@ -103,6 +105,10 @@ input[type="text"]:focus:not([readonly]), input[type="password"]:focus:not([read
   display: block;
   line-height: 22px;
   padding: 14px 16px;
+}
+
+.material-icons:not(.hide-on-med-and-down i) {
+  color: #5e35b1;
 }
 
 
@@ -133,7 +139,7 @@ input[type="text"]:focus:not([readonly]), input[type="password"]:focus:not([read
     right: 0;
   }
 
-  .padding[_ngcontent-c1] {
+  .padding {
     padding: 0;
   }
 }

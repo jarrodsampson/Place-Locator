@@ -17,6 +17,7 @@ export class LocationsComponent implements OnInit {
   };
 
   details = {};
+  isEditing = false;
 
   placeData = {
     geometry: {
@@ -96,15 +97,6 @@ export class LocationsComponent implements OnInit {
   }
 
   /*
-    Get the Details
-   */
-
-  detailsView(marker) {
-    console.log(marker);
-    this.details = marker;
-  }
-
-  /*
    Delete Single Marker
    */
   delete(marker) {
@@ -128,6 +120,25 @@ export class LocationsComponent implements OnInit {
       this.locationStore.updateItem(marker);
       this.toastService.show(marker.title + " has been locked.", 2500);
     }
+  }
+
+  /*
+   Get the Details
+   */
+
+  detailsView(marker) {
+    console.log(marker);
+    this.details = marker;
+  }
+
+  saveDetailChanges(marker) {
+    console.log(marker);
+    this.locationStore.updateItem(marker);
+    this.isEditing = false;
+  }
+
+  editDetails() {
+    this.isEditing = true;
   }
 
 

@@ -13,6 +13,7 @@ import 'rxjs/Rx';
 export class HomeComponent implements OnInit {
 
   details = {};
+  isEditing = false;
 
   search =  {
     title: ""
@@ -275,6 +276,7 @@ export class HomeComponent implements OnInit {
     if (place.isSuggested) {
     } else {
       console.log("saved");
+      this.zoom = 12;
       place.isSuggested = true;
 
       var markCount = this.markers.length + 1;
@@ -324,6 +326,16 @@ export class HomeComponent implements OnInit {
   detailsView(marker) {
     console.log(marker);
     this.details = marker;
+  }
+
+  saveDetailChanges(marker) {
+    console.log(marker);
+    this.locationStore.updateItem(marker);
+    this.isEditing = false;
+  }
+
+  editDetails() {
+    this.isEditing = true;
   }
 
 
