@@ -1,6 +1,6 @@
 # Place Locator
 
-An awesome collection of Android Repositories to add to your applications. Built with Angular 4. Designed by [planlodge](http://planlodge.com).
+Find places for your next awesome experience, search by zip or wander off to new territories, saved them as you go! Built with Angular 4. Designed by [planlodge](http://planlodge.com).
 
 [![Build Status](https://travis-ci.org/stevenbenner/jquery-powertip.svg?branch=master)](https://travis-ci.org/stevenbenner/jquery-powertip)
 ![License](https://img.shields.io/packagist/l/doctrine/orm.svg)
