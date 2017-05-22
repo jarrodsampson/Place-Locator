@@ -5,7 +5,7 @@ Find places for your next awesome experience, search by zip or wander off to new
 [![Build Status](https://travis-ci.org/stevenbenner/jquery-powertip.svg?branch=master)](https://travis-ci.org/stevenbenner/jquery-powertip)
 ![License](https://img.shields.io/packagist/l/doctrine/orm.svg)
 
-![Image](https://github.com/planlodge/Android-Arsenal/blob/master/screen.png?raw=true)
+![Image](https://github.com/planlodge/Place-Locator/blob/master/screen1.png?raw=true)
 
 ## Description
 
